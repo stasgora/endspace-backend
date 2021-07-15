@@ -102,9 +102,11 @@ packages:
   socket_io:
     dependency: "direct main"
     description:
-      name: socket_io
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: HEAD
+      resolved-ref: "0af9d5fe4fa33495882df82f3f82d0caac23cde1"
+      url: "https://github.com/stasgora/socket.io-dart.git"
+    source: git
     version: "1.0.0"
   socket_io_common:
     dependency: transitive
