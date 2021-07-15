@@ -11,3 +11,4 @@ dependencies:
 
 dev_dependencies:
   effective_dart: ^1.3.2
+  build_web_compilers: ^3.0.0
