@@ -4,23 +4,27 @@ import 'dart:math';
 import 'package:socket_io/socket_io.dart';
 
 void main() {
+  var playerToRoom = <String, String>{};
+  var idToPlayer = <String, String>{};
+  
   var server = Server();
   server.on('connection', (socket) {
-    void joinRoom(String player, String roomCode, {bool existing = false}) {
-      if (existing) {
-        var room = socket.adapter.rooms[roomCode];
-        if (room == null) {
-          socket.emit('unknownCode');
-          return;
-        }
-        if (room.sockets.containsKey(socket.id)) {
-          socket.emit('alreadyInRoom');
-          return;
-        }
-      }
+    List getRoomPlayers(String roomCode) {
+      var room = socket.adapter.rooms[roomCode]!;
+      return room.sockets.keys.map((e) => idToPlayer[e]).toList();
+    }
+    void onPlayersChanged(String roomCode) {
+      server.to(roomCode).emit('playersChange', getRoomPlayers(roomCode));
+    }
+    void joinRoom(String player, String roomCode) {
       socket.join(roomCode);
-      socket.emit('roomJoined', roomCode);
-      server.to(roomCode).emit('playersChange');
+      playerToRoom[socket.id] = roomCode;
+      idToPlayer[socket.id] = player;
+      socket.emit('roomJoined', {
+        'code': roomCode,
+        'players': getRoomPlayers(roomCode),
+      });
+      onPlayersChanged(roomCode);
       print('➕ $player joined the room $roomCode');
     }
     socket.on('createRoom', (args) {
@@ -30,13 +34,31 @@ void main() {
       joinRoom(args['name'], roomCode);
     });
     socket.on('joinRoom', (args) {
-      joinRoom(args['name'], args['roomCode']);
+      var roomCode = args['roomCode'];
+      var room = socket.adapter.rooms[roomCode];
+      if (room == null) {
+        socket.emit('unknownCode');
+        return;
+      }
+      if (room.sockets.containsKey(socket.id)) {
+        socket.emit('alreadyInRoom');
+        return;
+      }
+      joinRoom(args['name'], roomCode);
     });
     socket.on('leaveRoom', (args) {
       var roomCode = args['roomCode'];
       socket.leave(roomCode, (_) {});
-      server.to(roomCode).emit('playersChange');
+      onPlayersChanged(roomCode);
       print('➖ ${args['name']} left the room $roomCode');
+    });
+    socket.on('disconnect', (reason) {
+      var roomCode = playerToRoom[socket.id]!;
+      idToPlayer.remove(socket.id);
+      socket.leave(roomCode, (_) {});
+      print('⛔ ${socket.id} left the room $roomCode');
+      if (socket.adapter.rooms.containsKey(roomCode))
+        onPlayersChanged(roomCode);
     });
   });
   var portEnv = Platform.environment['PORT'];
