@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:socket_io/socket_io.dart';
 
 void main() {
@@ -9,5 +11,7 @@ void main() {
       client.emit('fromServer', "ok");
     });
   });
-  io.listen(3000);
+  var portEnv = Platform.environment['PORT'];
+  var port = portEnv == null ? 3000 : int.parse(portEnv);
+  io.listen(port);
 }
