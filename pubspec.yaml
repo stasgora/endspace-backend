@@ -9,8 +9,7 @@ environment:
 
 dependencies:
   args: ^2.0.0
-  socket_io:
-    git: https://github.com/stasgora/socket.io-dart.git
+  socket_io: ^1.0.0
 
   equatable: ^2.0.3
 

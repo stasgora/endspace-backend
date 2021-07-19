@@ -7,7 +7,7 @@ class Game {
   final Map<String, String> players = {};
   late final String code;
 
-  double fuel = 0;
+  double energy = 0;
   int points = 0;
 
   final _random = Random();
