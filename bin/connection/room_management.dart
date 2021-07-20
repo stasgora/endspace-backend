@@ -3,8 +3,6 @@ import 'connection.dart';
 
 // ignore_for_file: avoid_dynamic_calls
 mixin RoomManagement on Connection {
-  void onStartGame(dynamic args) => broadcast('gameStarted');
-
   void onCreateRoom(dynamic args) {
     room = Game();
     context.games[room!.code] = room!;

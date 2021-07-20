@@ -10,8 +10,6 @@ class ClientConnection extends Connection with RoomManagement, GameManagement {
       : super(socket: socket, context: state) {
     print('⬆️ New client connected');
 
-    socket.on('planetData', onPlanetData);
-
     socket.on('createRoom', onCreateRoom);
     socket.on('joinRoom', onJoinRoom);
     socket.on('startGame', onStartGame);

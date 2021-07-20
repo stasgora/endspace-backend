@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'planet.dart';
+
 final _chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 final _codeLength = 8;
 
@@ -7,8 +9,11 @@ class Game {
   final Map<String, String> players = {};
   late final String code;
 
+  final planets = <Planet>[];
   double energy = 0;
   int points = 0;
+
+  Planet get planet => planets.last;
 
   final _random = Random();
 
@@ -21,13 +26,13 @@ class Game {
   }
 
   void addPlayer(String id, String name) {
-    print('➕ $name joined the game $code');
+    print('➕ $name joined the room $code');
     players[id] = name;
   }
 
   void removePlayer(String id) {
-    print('➖ ${players[id]} left the game $code');
+    print('➖ ${players[id]} left the room $code');
     players.remove(id);
-    if (players.isEmpty) print('🚫 last player left the game $code');
+    if (players.isEmpty) print('🚫 last player left the room $code');
   }
 }
