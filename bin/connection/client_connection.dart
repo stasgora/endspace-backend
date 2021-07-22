@@ -10,6 +10,9 @@ class ClientConnection extends Connection with RoomManagement, GameManagement {
       : super(socket: socket, context: state) {
     print('⬆️ New client connected');
 
+    socket.on('joinTask', onJoinTask);
+    socket.on('taskAction', onTaskAction);
+
     socket.on('createRoom', onCreateRoom);
     socket.on('joinRoom', onJoinRoom);
     socket.on('startGame', onStartGame);

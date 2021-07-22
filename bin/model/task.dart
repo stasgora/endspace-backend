@@ -11,11 +11,13 @@ enum TaskState {
 
 class Task with Counted {
   final TaskType type;
-  final int participants;
+  final String name;
+  List<String> participants = [];
+  final int peopleCount;
   final double energyGain;
   TaskState state = TaskState.available;
 
-  Task(this.type, this.participants, this.energyGain) {
+  Task(this.type, this.name, this.peopleCount, this.energyGain) {
     assignID();
   }
 
@@ -23,7 +25,8 @@ class Task with Counted {
     'id': id,
     'type': EnumToString.convertToString(type),
     'state': EnumToString.convertToString(state),
-    'participants': participants,
+    'participants': participants.length,
+    'name': name,
   };
 }
 

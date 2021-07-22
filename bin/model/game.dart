@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'planet.dart';
+import 'task.dart';
 
 final _chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 final _codeLength = 8;
@@ -35,4 +36,11 @@ class Game {
     players.remove(id);
     if (players.isEmpty) print('🚫 last player left the room $code');
   }
+
+  Map<String, dynamic> toJson() => {
+        'planet': planet.name,
+        'energy': energy,
+        'endTime': planet.endTime.millisecondsSinceEpoch,
+        'tasks': planet.tasksWith((task) => task.state == TaskState.available),
+      };
 }

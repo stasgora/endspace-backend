@@ -5,19 +5,42 @@ import 'connection.dart';
 
 mixin GameManagement on Connection {
   Game get game => room!;
+  String get player => game.players[socket.id]!;
 
   void onStartGame(dynamic args) {
     _createPlanet();
-    broadcast('gameStarted', _dashboardState());
+    broadcast('gameStarted', game.toJson());
   }
 
-  Map<String, dynamic> _dashboardState() => {
-        'planet': game.planet.name,
-        'energy': game.energy,
-        'endTime': game.planet.endTime.millisecondsSinceEpoch,
-        'tasks': game.planet
-            .tasksWith((task) => task.state == TaskState.available),
-      };
+  void onTaskAction(dynamic args) {
+    var task = game.planet.tasks[args];
+    if (task == null) return;
+    task.state = TaskState.completed;
+    _taskChanged(task);
+  }
+
+  void onJoinTask(dynamic args) {
+    var task = game.planet.tasks[args];
+    if (task == null || task.state != TaskState.available) {
+      socket.emit('joinTaskResponse', {'error': 'not-available'});
+      return;
+    }
+    if (task.participants.length < task.peopleCount) {
+      socket.join('${task.id}');
+      task.participants.add(socket.id);
+      print('$player joined task ${task.name}');
+    }
+    if (task.participants.length == task.peopleCount) {
+      task.state = TaskState.inProgress;
+      _taskChanged(task);
+      print('Task "${task.name}" started');
+    }
+    socket.emit('joinTaskResponse', task.toJson());
+  }
+
+  void _taskChanged(Task task) {
+    broadcast('taskChange', task.toJson());
+  }
 
   void _createPlanet() {
     game.planets.add(Planet(
@@ -25,7 +48,7 @@ mixin GameManagement on Connection {
       Duration(minutes: 10),
     ));
     game.planet.addTasks([
-      Task(TaskType.test, 1, .2),
+      Task(TaskType.test, 'do sth', 1, .2),
     ]);
   }
 }
