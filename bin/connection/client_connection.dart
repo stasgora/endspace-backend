@@ -11,6 +11,7 @@ class ClientConnection extends Connection with RoomManagement, GameManagement {
     print('⬆️ New client connected');
 
     socket.on('joinTask', onJoinTask);
+    socket.on('leaveTask', onLeaveTask);
     socket.on('taskAction', onTaskAction);
 
     socket.on('createRoom', onCreateRoom);
@@ -19,7 +20,7 @@ class ClientConnection extends Connection with RoomManagement, GameManagement {
     socket.on('leaveRoom', (args) => leaveRoom());
     socket.on('disconnect', (reason) {
       leaveRoom();
-      state.connections.remove(this);
+      state.connections.remove(socket.id);
       print('⬇️ Client disconnected');
     });
   }

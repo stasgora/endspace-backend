@@ -8,10 +8,6 @@ class Planet {
   Planet(this.name, Duration time)
       : endTime = DateTime.now().add(Duration(minutes: 10));
 
-  List<dynamic> tasksWith(bool Function(Task) condition) {
-    return tasks.values.where(condition).map((e) => e.toJson()).toList();
-  }
-
   void addTasks(List<Task> list) {
     list.forEach((task) => tasks[task.id] = task);
   }

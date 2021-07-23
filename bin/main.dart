@@ -8,7 +8,8 @@ import 'model/server_context.dart';
 void main() {
   var state = ServerContext(Server());
   state.server.on('connection', (data) {
-    state.connections.add(ClientConnection(socket: data, state: state));
+    var connection = ClientConnection(socket: data, state: state);
+    state.connections[connection.socket.id] = connection;
   });
   var port = Platform.environment['PORT'];
   state.server.listen(port == null ? 3000 : int.parse(port));

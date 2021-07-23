@@ -9,15 +9,19 @@ enum TaskState {
   available, inProgress, completed, failed
 }
 
+extension TaskFinished on TaskState {
+  bool get finished => this == TaskState.completed || this == TaskState.failed;
+}
+
 class Task with Counted {
   final TaskType type;
   final String name;
-  List<String> participants = [];
-  final int peopleCount;
+  List<String> players = [];
+  final int playersNeeded;
   final double energyGain;
   TaskState state = TaskState.available;
 
-  Task(this.type, this.name, this.peopleCount, this.energyGain) {
+  Task(this.type, this.name, this.playersNeeded, this.energyGain) {
     assignID();
   }
 
@@ -25,7 +29,8 @@ class Task with Counted {
     'id': id,
     'type': EnumToString.convertToString(type),
     'state': EnumToString.convertToString(state),
-    'participants': participants.length,
+    'players': players.length,
+    'playersNeeded': playersNeeded,
     'name': name,
   };
 }

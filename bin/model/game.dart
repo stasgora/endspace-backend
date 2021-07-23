@@ -12,7 +12,6 @@ class Game {
 
   final planets = <Planet>[];
   double energy = 0;
-  int points = 0;
 
   Planet get planet => planets.last;
 
@@ -41,6 +40,6 @@ class Game {
         'planet': planet.name,
         'energy': energy,
         'endTime': planet.endTime.millisecondsSinceEpoch,
-        'tasks': planet.tasksWith((task) => task.state == TaskState.available),
+        'tasks': planet.tasks.values.map((t) => t.toJson()).toList(),
       };
 }
